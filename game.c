@@ -63,7 +63,7 @@ void PrintGrid(){
     printf("]\n");
 }
 
-void moveBlock(Block *b, int rows, int columns) {
+void moveBlock(Block *b, int columns, int rows) {
     b->rowOffset += rows;
     b->columnOffset += columns;
 }
@@ -138,6 +138,8 @@ void InitTBlock(Block *lb) {
 
         };
 
+        moveBlock(&tmp, 0, 3);
+
         memcpy(lb, &tmp, sizeof(Block));
 }
 
@@ -177,7 +179,7 @@ void InitLBlock(Block *lb) {
             }
 
         };
-
+        moveBlock(&tmp, 0, 3);
         memcpy(lb, &tmp, sizeof(Block));
 }
 
@@ -217,7 +219,7 @@ void InitIBlock(Block *lb) {
             }
 
         };
-
+        moveBlock(&tmp, 0, 3);
         memcpy(lb, &tmp, sizeof(Block));
 }
 
@@ -257,7 +259,7 @@ void InitOBlock(Block *lb) {
             }
 
         };
-
+        moveBlock(&tmp, 0, 3);
         memcpy(lb, &tmp, sizeof(Block));
 }
 
@@ -298,7 +300,7 @@ void InitSBlock(Block *lb) {
             }
 
         };
-
+        moveBlock(&tmp, 0, 3);
         memcpy(lb, &tmp, sizeof(Block));
 }
 
@@ -338,7 +340,7 @@ void InitZBlock(Block *lb) {
             }
 
         };
-
+        moveBlock(&tmp, 0, 3);
         memcpy(lb, &tmp, sizeof(Block));
 }
 
@@ -358,7 +360,6 @@ int main() {
     Block test = {};
 
     InitZBlock(&test);
-    moveBlock(&test, 5, 1);
 
 
     while(WindowShouldClose() == false) {
