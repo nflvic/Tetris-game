@@ -103,7 +103,7 @@ void DisplayGrid() {
 
 void InitTBlock(Block *lb) {
         Block tmp = {
-            .color = RED,
+            .color = VIOLET,
             .columnOffset = 0,
             .rowOffset = 0,
             .rotationState = 0,
@@ -143,7 +143,7 @@ void InitTBlock(Block *lb) {
 
 void InitLBlock(Block *lb) {
         Block tmp = {
-            .color = RED,
+            .color = GREEN,
             .columnOffset = 0,
             .rowOffset = 0,
             .id = L_BLOCK,
@@ -223,7 +223,7 @@ void InitIBlock(Block *lb) {
 
 void InitOBlock(Block *lb) {
         Block tmp = {
-            .color = RED,
+            .color = PURPLE,
             .columnOffset = 0,
             .rowOffset = 0,
             .id = O_BLOCK,
@@ -261,6 +261,87 @@ void InitOBlock(Block *lb) {
         memcpy(lb, &tmp, sizeof(Block));
 }
 
+
+void InitSBlock(Block *lb) {
+        Block tmp = {
+            .color = YELLOW,
+            .columnOffset = 0,
+            .rowOffset = 0,
+            .id = S_BLOCK,
+            .rotationState = 2,
+            .cells = {
+                [0] = {
+                    [0] = { .x = 0, .y = 1 },
+                    [1] = { .x = 0, .y = 2 },
+                    [2] = { .x = 1, .y = 0 },
+                    [3] = { .x = 1, .y = 1 }
+                },
+                [1] = {
+                    [0] = { .x = 0, .y = 1 },
+                    [1] = { .x = 1, .y = 1 },
+                    [2] = { .x = 1, .y = 2 },
+                    [3] = { .x = 2, .y = 2 }
+                },
+                [2] = {
+                    [0] = { .x = 1, .y = 1 },
+                    [1] = { .x = 1, .y = 2 },
+                    [2] = { .x = 2, .y = 0 },
+                    [3] = { .x = 2, .y = 1 }
+                },
+
+                [3] = {
+                    [0] = { .x = 0, .y = 0 },
+                    [1] = { .x = 1, .y = 0 },
+                    [2] = { .x = 1, .y = 1 },
+                    [3] = { .x = 2, .y = 1 }
+                },
+            }
+
+        };
+
+        memcpy(lb, &tmp, sizeof(Block));
+}
+
+void InitZBlock(Block *lb) {
+        Block tmp = {
+            .color = BLUE,
+            .columnOffset = 0,
+            .rowOffset = 0,
+            .id = Z_BLOCK,
+            .rotationState = 2,
+            .cells = {
+                [0] = {
+                    [0] = { .x = 0, .y = 0 },
+                    [1] = { .x = 0, .y = 1 },
+                    [2] = { .x = 1, .y = 1 },
+                    [3] = { .x = 1, .y = 2 }
+                },
+                [1] = {
+                    [0] = { .x = 0, .y = 2 },
+                    [1] = { .x = 1, .y = 1 },
+                    [2] = { .x = 1, .y = 2 },
+                    [3] = { .x = 2, .y = 1 }
+                },
+                [2] = {
+                    [0] = { .x = 1, .y = 0 },
+                    [1] = { .x = 1, .y = 1 },
+                    [2] = { .x = 2, .y = 1 },
+                    [3] = { .x = 2, .y = 2 }
+                },
+
+                [3] = {
+                    [0] = { .x = 0, .y = 1 },
+                    [1] = { .x = 1, .y = 0 },
+                    [2] = { .x = 1, .y = 1 },
+                    [3] = { .x = 2, .y = 0 }
+                },
+            }
+
+        };
+
+        memcpy(lb, &tmp, sizeof(Block));
+}
+
 int main() {
 
     InitWindow(300, 600, "Tetris");
@@ -276,7 +357,7 @@ int main() {
 
     Block test = {};
 
-    InitOBlock(&test);
+    InitZBlock(&test);
     moveBlock(&test, 5, 1);
 
 
