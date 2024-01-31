@@ -102,14 +102,11 @@ void DisplayGrid() {
 }
 
 void InitTBlock(Block *lb) {
-
-    //switch (id) {
-        //case T_BLOCK: {
-
         Block tmp = {
             .color = RED,
             .columnOffset = 0,
             .rowOffset = 0,
+            .rotationState = 0,
             .id = T_BLOCK,
             .cells = {
                 [0] = {
@@ -142,12 +139,47 @@ void InitTBlock(Block *lb) {
         };
 
         memcpy(lb, &tmp, sizeof(Block));
-        //}  break;
-
-        //default:
-   // }
 }
 
+void InitLBlock(Block *lb) {
+        Block tmp = {
+            .color = RED,
+            .columnOffset = 0,
+            .rowOffset = 0,
+            .id = L_BLOCK,
+            .rotationState = 2,
+            .cells = {
+                [0] = {
+                    [0] = { .x = 0, .y = 2 },
+                    [1] = { .x = 1, .y = 0 },
+                    [2] = { .x = 1, .y = 1 },
+                    [3] = { .x = 1, .y = 2 }
+                },
+                [1] = {
+                    [0] = { .x = 1, .y = 0 },
+                    [1] = { .x = 1, .y = 1 },
+                    [2] = { .x = 1, .y = 2 },
+                    [3] = { .x = 2, .y = 2 }
+                },
+                [2] = {
+                    [0] = { .x = 0, .y = 1 },
+                    [1] = { .x = 1, .y = 1 },
+                    [2] = { .x = 2, .y = 1 },
+                    [3] = { .x = 0, .y = 2 }
+                },
+
+                [3] = {
+                    [0] = { .x = 1, .y = 0 },
+                    [1] = { .x = 1, .y = 1 },
+                    [2] = { .x = 1, .y = 2 },
+                    [3] = { .x = 0, .y = 0 }
+                },
+            }
+
+        };
+
+        memcpy(lb, &tmp, sizeof(Block));
+}
 
 int main() {
 
@@ -164,7 +196,7 @@ int main() {
 
     Block test = {};
 
-    InitTBlock(&test);
+    InitLBlock(&test);
     moveBlock(&test, 5, 1);
 
 
