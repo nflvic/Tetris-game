@@ -221,6 +221,46 @@ void InitIBlock(Block *lb) {
         memcpy(lb, &tmp, sizeof(Block));
 }
 
+void InitOBlock(Block *lb) {
+        Block tmp = {
+            .color = RED,
+            .columnOffset = 0,
+            .rowOffset = 0,
+            .id = O_BLOCK,
+            .rotationState = 2,
+            .cells = {
+                [0] = {
+                    [0] = { .x = 0, .y = 0 },
+                    [1] = { .x = 0, .y = 1 },
+                    [2] = { .x = 1, .y = 0 },
+                    [3] = { .x = 1, .y = 1 }
+                },
+                [1] = {
+                    [0] = { .x = 0, .y = 0 },
+                    [1] = { .x = 0, .y = 1 },
+                    [2] = { .x = 1, .y = 0 },
+                    [3] = { .x = 1, .y = 1 }
+                },
+                [2] = {
+                    [0] = { .x = 0, .y = 0 },
+                    [1] = { .x = 0, .y = 1 },
+                    [2] = { .x = 1, .y = 0 },
+                    [3] = { .x = 1, .y = 1 }
+                },
+
+                [3] = {
+                    [0] = { .x = 0, .y = 0 },
+                    [1] = { .x = 0, .y = 1 },
+                    [2] = { .x = 1, .y = 0 },
+                    [3] = { .x = 1, .y = 1 }
+                },
+            }
+
+        };
+
+        memcpy(lb, &tmp, sizeof(Block));
+}
+
 int main() {
 
     InitWindow(300, 600, "Tetris");
@@ -236,7 +276,7 @@ int main() {
 
     Block test = {};
 
-    InitIBlock(&test);
+    InitOBlock(&test);
     moveBlock(&test, 5, 1);
 
 
