@@ -15,7 +15,7 @@ bool GAME_OVER = false;
 
 typedef enum BlockID BlockID;
 enum BlockID {
-    L_BLOCK,
+    L_BLOCK = 1,
     J_BLOCK,
     I_BLOCK,
     S_BLOCK,
@@ -26,8 +26,8 @@ enum BlockID {
 
 typedef struct Position Position;
 struct Position {
-    int     x; 
-    int     y;
+    int     row;//x
+    int     column;//y
 };
 
 typedef struct Block Block ;
@@ -36,7 +36,7 @@ struct Block {
 
     int rotationState;
     int rowOffset;
-    int columnOffset;
+    int colOffset;
 
     Position cells[NUM_STATES][NUM_POSITIONS];
 
@@ -46,10 +46,11 @@ struct Block {
 int grid[NUM_ROWS][NUM_COLS] = { 0 };
 
 Color colors[] = {
-    DARKGRAY, GREEN, RED, ORANGE, YELLOW, PURPLE, PINK, BLUE
+    BROWN, GREEN, RED, ORANGE, YELLOW, PURPLE, PINK, BLUE, BLACK
 };
 
 void PrintGrid(){
+    return;
     printf("[\n");
 
     for(int i = 0; i < NUM_ROWS; i++) {
@@ -65,17 +66,17 @@ void PrintGrid(){
     printf("]\n");
 }
 
-void moveBlock(Block *b, int columns, int rows) {
+void moveBlock(Block *b, int rows, int columns) {
     b->rowOffset += rows;
-    b->columnOffset += columns;
+    b->colOffset += columns;
 }
 
 void getCellPositions(Block *b, Position cells[]) {
     Position *tiles = b->cells[b->rotationState];
 
     for(int i = 0; i < NUM_POSITIONS; i++) {
-        cells[i].x = tiles[i].x + b->rowOffset;
-        cells[i].y = tiles[i].y + b->columnOffset;
+        cells[i].row = tiles[i].row + b->rowOffset;
+        cells[i].column = tiles[i].column + b->colOffset;
     }
 }
 
@@ -85,9 +86,9 @@ void DrawBlock(Block *b) {
     getCellPositions(b, poss);
 
     for(int i = 0; i < NUM_POSITIONS; i++) {
-        printf("(%d, %d)\n",poss[i].x, poss[i].y);
+        printf("(%d, %d)\n",poss[i].row, poss[i].column);
 
-        DrawRectangle(poss[i].x * CELL_SIZE + 1, poss[i].y * CELL_SIZE + 1, CELL_SIZE - 1, CELL_SIZE - 1, b->color);
+        DrawRectangle(poss[i].column * CELL_SIZE + 1, poss[i].row * CELL_SIZE + 1, CELL_SIZE - 1, CELL_SIZE - 1, b->color);
         //break;
     }
 }
@@ -98,6 +99,10 @@ void DisplayGrid() {
 
             int cellvalue = grid[row][column];
 
+            if(cellvalue == 0) {
+                cellvalue = 8;
+            }
+
             DrawRectangle((column * CELL_SIZE) + 1, (row * CELL_SIZE) + 1, CELL_SIZE - 1, CELL_SIZE - 1, colors[cellvalue]);
         }
     }
@@ -106,35 +111,35 @@ void DisplayGrid() {
 void InitTBlock(Block *lb) {
         Block tmp = {
             .color = VIOLET,
-            .columnOffset = 0,
+            .colOffset = 0,
             .rowOffset = 0,
             .rotationState = 0,
             .id = T_BLOCK,
             .cells = {
                 [0] = {
-                    [0] = { .x = 0, .y = 1 },
-                    [1] = { .x = 1, .y = 0 },
-                    [2] = { .x = 1, .y = 1 },
-                    [3] = { .x = 1, .y = 2 }
+                    [0] = { .row = 0, .column = 1 },
+                    [1] = { .row = 1, .column = 0 },
+                    [2] = { .row = 1, .column = 1 },
+                    [3] = { .row = 1, .column = 2 }
                 },
                 [1] = {
-                    [0] = { .x = 0, .y = 1 },
-                    [1] = { .x = 1, .y = 1 },
-                    [2] = { .x = 1, .y = 2 },
-                    [3] = { .x = 2, .y = 1 }
+                    [0] = { .row = 0, .column = 1 },
+                    [1] = { .row = 1, .column = 1 },
+                    [2] = { .row = 1, .column = 2 },
+                    [3] = { .row = 2, .column = 1 }
                 },
                 [2] = {
-                    [0] = { .x = 1, .y = 0 },
-                    [1] = { .x = 1, .y = 1 },
-                    [2] = { .x = 1, .y = 2 },
-                    [3] = { .x = 2, .y = 1 }
+                    [0] = { .row = 1, .column = 0 },
+                    [1] = { .row = 1, .column = 1 },
+                    [2] = { .row = 1, .column = 2 },
+                    [3] = { .row = 2, .column = 1 }
                 },
 
                 [3] = {
-                    [0] = { .x = 0, .y = 1 },
-                    [1] = { .x = 1, .y = 0 },
-                    [2] = { .x = 1, .y = 1 },
-                    [3] = { .x = 2, .y = 1 }
+                    [0] = { .row = 0, .column = 1 },
+                    [1] = { .row = 1, .column = 0 },
+                    [2] = { .row = 1, .column = 1 },
+                    [3] = { .row = 2, .column = 1 }
                 },
             }
 
@@ -148,35 +153,35 @@ void InitTBlock(Block *lb) {
 void InitLBlock(Block *lb) {
         Block tmp = {
             .color = GREEN,
-            .columnOffset = 0,
+            .colOffset = 0,
             .rowOffset = 0,
             .id = L_BLOCK,
             .rotationState = 0,
             .cells = {
                 [0] = {
-                    [0] = { .x = 0, .y = 2 },
-                    [1] = { .x = 1, .y = 0 },
-                    [2] = { .x = 1, .y = 1 },
-                    [3] = { .x = 1, .y = 2 }
+                    [0] = { .row = 0, .column = 2 },
+                    [1] = { .row = 1, .column = 0 },
+                    [2] = { .row = 1, .column = 1 },
+                    [3] = { .row = 1, .column = 2 }
                 },
                 [1] = {
-                    [0] = { .x = 1, .y = 0 },
-                    [1] = { .x = 1, .y = 1 },
-                    [2] = { .x = 1, .y = 2 },
-                    [3] = { .x = 2, .y = 2 }
+                    [0] = { .row = 1, .column = 0 },
+                    [1] = { .row = 1, .column = 1 },
+                    [2] = { .row = 1, .column = 2 },
+                    [3] = { .row = 2, .column = 2 }
                 },
                 [2] = {
-                    [0] = { .x = 0, .y = 1 },
-                    [1] = { .x = 1, .y = 1 },
-                    [2] = { .x = 2, .y = 1 },
-                    [3] = { .x = 0, .y = 2 }
+                    [0] = { .row = 0, .column = 1 },
+                    [1] = { .row = 1, .column = 1 },
+                    [2] = { .row = 2, .column = 1 },
+                    [3] = { .row = 0, .column = 2 }
                 },
 
                 [3] = {
-                    [0] = { .x = 1, .y = 0 },
-                    [1] = { .x = 1, .y = 1 },
-                    [2] = { .x = 1, .y = 2 },
-                    [3] = { .x = 0, .y = 0 }
+                    [0] = { .row = 1, .column = 0 },
+                    [1] = { .row = 1, .column = 1 },
+                    [2] = { .row = 1, .column = 2 },
+                    [3] = { .row = 0, .column = 0 }
                 },
             }
 
@@ -188,35 +193,35 @@ void InitLBlock(Block *lb) {
 void InitIBlock(Block *lb) {
         Block tmp = {
             .color = RED,
-            .columnOffset = 0,
+            .colOffset = 0,
             .rowOffset = 0,
             .id = I_BLOCK,
             .rotationState = 0,
             .cells = {
                 [0] = {
-                    [0] = { .x = 1, .y = 0 },
-                    [1] = { .x = 1, .y = 1 },
-                    [2] = { .x = 1, .y = 2 },
-                    [3] = { .x = 1, .y = 3 }
+                    [0] = { .row = 1, .column = 0 },
+                    [1] = { .row = 1, .column = 1 },
+                    [2] = { .row = 1, .column = 2 },
+                    [3] = { .row = 1, .column = 3 }
                 },
                 [1] = {
-                    [0] = { .x = 0, .y = 2 },
-                    [1] = { .x = 1, .y = 2 },
-                    [2] = { .x = 2, .y = 2 },
-                    [3] = { .x = 3, .y = 2 }
+                    [0] = { .row = 0, .column = 2 },
+                    [1] = { .row = 1, .column = 2 },
+                    [2] = { .row = 2, .column = 2 },
+                    [3] = { .row = 3, .column = 2 }
                 },
                 [2] = {
-                    [0] = { .x = 2, .y = 0 },
-                    [1] = { .x = 2, .y = 1 },
-                    [2] = { .x = 2, .y = 2 },
-                    [3] = { .x = 2, .y = 3 }
+                    [0] = { .row = 2, .column = 0 },
+                    [1] = { .row = 2, .column = 1 },
+                    [2] = { .row = 2, .column = 2 },
+                    [3] = { .row = 2, .column = 3 }
                 },
 
                 [3] = {
-                    [0] = { .x = 0, .y = 1 },
-                    [1] = { .x = 1, .y = 1 },
-                    [2] = { .x = 2, .y = 1 },
-                    [3] = { .x = 3, .y = 1 }
+                    [0] = { .row = 0, .column = 1 },
+                    [1] = { .row = 1, .column = 1 },
+                    [2] = { .row = 2, .column = 1 },
+                    [3] = { .row = 3, .column = 1 }
                 },
             }
 
@@ -228,35 +233,35 @@ void InitIBlock(Block *lb) {
 void InitOBlock(Block *lb) {
         Block tmp = {
             .color = PURPLE,
-            .columnOffset = 0,
+            .colOffset = 0,
             .rowOffset = 0,
             .id = O_BLOCK,
             .rotationState = 0,
             .cells = {
                 [0] = {
-                    [0] = { .x = 0, .y = 0 },
-                    [1] = { .x = 0, .y = 1 },
-                    [2] = { .x = 1, .y = 0 },
-                    [3] = { .x = 1, .y = 1 }
+                    [0] = { .row = 0, .column = 0 },
+                    [1] = { .row = 0, .column = 1 },
+                    [2] = { .row = 1, .column = 0 },
+                    [3] = { .row = 1, .column = 1 }
                 },
                 [1] = {
-                    [0] = { .x = 0, .y = 0 },
-                    [1] = { .x = 0, .y = 1 },
-                    [2] = { .x = 1, .y = 0 },
-                    [3] = { .x = 1, .y = 1 }
+                    [0] = { .row = 0, .column = 0 },
+                    [1] = { .row = 0, .column = 1 },
+                    [2] = { .row = 1, .column = 0 },
+                    [3] = { .row = 1, .column = 1 }
                 },
                 [2] = {
-                    [0] = { .x = 0, .y = 0 },
-                    [1] = { .x = 0, .y = 1 },
-                    [2] = { .x = 1, .y = 0 },
-                    [3] = { .x = 1, .y = 1 }
+                    [0] = { .row = 0, .column = 0 },
+                    [1] = { .row = 0, .column = 1 },
+                    [2] = { .row = 1, .column = 0 },
+                    [3] = { .row = 1, .column = 1 }
                 },
 
                 [3] = {
-                    [0] = { .x = 0, .y = 0 },
-                    [1] = { .x = 0, .y = 1 },
-                    [2] = { .x = 1, .y = 0 },
-                    [3] = { .x = 1, .y = 1 }
+                    [0] = { .row = 0, .column = 0 },
+                    [1] = { .row = 0, .column = 1 },
+                    [2] = { .row = 1, .column = 0 },
+                    [3] = { .row = 1, .column = 1 }
                 },
             }
 
@@ -269,35 +274,35 @@ void InitOBlock(Block *lb) {
 void InitSBlock(Block *lb) {
         Block tmp = {
             .color = YELLOW,
-            .columnOffset = 0,
+            .colOffset = 0,
             .rowOffset = 0,
             .id = S_BLOCK,
             .rotationState = 0,
             .cells = {
                 [0] = {
-                    [0] = { .x = 0, .y = 1 },
-                    [1] = { .x = 0, .y = 2 },
-                    [2] = { .x = 1, .y = 0 },
-                    [3] = { .x = 1, .y = 1 }
+                    [0] = { .row = 0, .column = 1 },
+                    [1] = { .row = 0, .column = 2 },
+                    [2] = { .row = 1, .column = 0 },
+                    [3] = { .row = 1, .column = 1 }
                 },
                 [1] = {
-                    [0] = { .x = 0, .y = 1 },
-                    [1] = { .x = 1, .y = 1 },
-                    [2] = { .x = 1, .y = 2 },
-                    [3] = { .x = 2, .y = 2 }
+                    [0] = { .row = 0, .column = 1 },
+                    [1] = { .row = 1, .column = 1 },
+                    [2] = { .row = 1, .column = 2 },
+                    [3] = { .row = 2, .column = 2 }
                 },
                 [2] = {
-                    [0] = { .x = 1, .y = 1 },
-                    [1] = { .x = 1, .y = 2 },
-                    [2] = { .x = 2, .y = 0 },
-                    [3] = { .x = 2, .y = 1 }
+                    [0] = { .row = 1, .column = 1 },
+                    [1] = { .row = 1, .column = 2 },
+                    [2] = { .row = 2, .column = 0 },
+                    [3] = { .row = 2, .column = 1 }
                 },
 
                 [3] = {
-                    [0] = { .x = 0, .y = 0 },
-                    [1] = { .x = 1, .y = 0 },
-                    [2] = { .x = 1, .y = 1 },
-                    [3] = { .x = 2, .y = 1 }
+                    [0] = { .row = 0, .column = 0 },
+                    [1] = { .row = 1, .column = 0 },
+                    [2] = { .row = 1, .column = 1 },
+                    [3] = { .row = 2, .column = 1 }
                 },
             }
 
@@ -309,35 +314,35 @@ void InitSBlock(Block *lb) {
 void InitZBlock(Block *lb) {
         Block tmp = {
             .color = BLUE,
-            .columnOffset = 0,
+            .colOffset = 0,
             .rowOffset = 0,
             .id = Z_BLOCK,
             .rotationState = 0,
             .cells = {
                 [0] = {
-                    [0] = { .x = 0, .y = 0 },
-                    [1] = { .x = 0, .y = 1 },
-                    [2] = { .x = 1, .y = 1 },
-                    [3] = { .x = 1, .y = 2 }
+                    [0] = { .row = 0, .column = 0 },
+                    [1] = { .row = 0, .column = 1 },
+                    [2] = { .row = 1, .column = 1 },
+                    [3] = { .row = 1, .column = 2 }
                 },
                 [1] = {
-                    [0] = { .x = 0, .y = 2 },
-                    [1] = { .x = 1, .y = 1 },
-                    [2] = { .x = 1, .y = 2 },
-                    [3] = { .x = 2, .y = 1 }
+                    [0] = { .row = 0, .column = 2 },
+                    [1] = { .row = 1, .column = 1 },
+                    [2] = { .row = 1, .column = 2 },
+                    [3] = { .row = 2, .column = 1 }
                 },
                 [2] = {
-                    [0] = { .x = 1, .y = 0 },
-                    [1] = { .x = 1, .y = 1 },
-                    [2] = { .x = 2, .y = 1 },
-                    [3] = { .x = 2, .y = 2 }
+                    [0] = { .row = 1, .column = 0 },
+                    [1] = { .row = 1, .column = 1 },
+                    [2] = { .row = 2, .column = 1 },
+                    [3] = { .row = 2, .column = 2 }
                 },
 
                 [3] = {
-                    [0] = { .x = 0, .y = 1 },
-                    [1] = { .x = 1, .y = 0 },
-                    [2] = { .x = 1, .y = 1 },
-                    [3] = { .x = 2, .y = 0 }
+                    [0] = { .row = 0, .column = 1 },
+                    [1] = { .row = 1, .column = 0 },
+                    [2] = { .row = 1, .column = 1 },
+                    [3] = { .row = 2, .column = 0 }
                 },
                 }
             };
@@ -349,35 +354,35 @@ void InitZBlock(Block *lb) {
 void InitJBlock(Block *lb) {
         Block tmp = {
             .color = PINK,
-            .columnOffset = 0,
+            .colOffset = 0,
             .rowOffset = 0,
             .id = J_BLOCK,
             .rotationState = 0,
             .cells = {
                 [0] = {
-                    [0] = { .x = 0, .y = 0 },
-                    [1] = { .x = 1, .y = 0 },
-                    [2] = { .x = 1, .y = 1 },
-                    [3] = { .x = 1, .y = 2 }
+                    [0] = { .row = 0, .column = 0 },
+                    [1] = { .row = 1, .column = 0 },
+                    [2] = { .row = 1, .column = 1 },
+                    [3] = { .row = 1, .column = 2 }
                 },
                 [1] = {
-                    [0] = { .x = 0, .y = 1 },
-                    [1] = { .x = 0, .y = 2 },
-                    [2] = { .x = 1, .y = 1 },
-                    [3] = { .x = 2, .y = 1 }
+                    [0] = { .row = 0, .column = 1 },
+                    [1] = { .row = 0, .column = 2 },
+                    [2] = { .row = 1, .column = 1 },
+                    [3] = { .row = 2, .column = 1 }
                 },
                 [2] = {
-                    [0] = { .x = 1, .y = 0 },
-                    [1] = { .x = 1, .y = 1 },
-                    [2] = { .x = 1, .y = 2 },
-                    [3] = { .x = 2, .y = 2 }
+                    [0] = { .row = 1, .column = 0 },
+                    [1] = { .row = 1, .column = 1 },
+                    [2] = { .row = 1, .column = 2 },
+                    [3] = { .row = 2, .column = 2 }
                 },
 
                 [3] = {
-                    [0] = { .x = 0, .y = 1 },
-                    [1] = { .x = 1, .y = 1 },
-                    [2] = { .x = 2, .y = 0 },
-                    [3] = { .x = 2, .y = 1 }
+                    [0] = { .row = 0, .column = 1 },
+                    [1] = { .row = 1, .column = 1 },
+                    [2] = { .row = 2, .column = 0 },
+                    [3] = { .row = 2, .column = 1 }
                 },
             }
 
@@ -440,7 +445,7 @@ void drawGame() {
     DrawBlock(&currentBlock);
 }
 
-bool isCellOutSide(int col, int row) {
+bool isCellOutSide(int row, int col) {
     if(row >= 0 && row < NUM_ROWS && col >= 0 && col < NUM_COLS) {
         return false;
     }
@@ -453,7 +458,7 @@ bool isBlockOutside() {
     Position p[NUM_POSITIONS];
     getCellPositions(&currentBlock, p);
     for(int i = 0; i < NUM_POSITIONS; i++) {
-        if(isCellOutSide(p[i].x, p[i].y)) {
+        if(isCellOutSide(p[i].row, p[i].column)) {
             return true;
         }
     }
@@ -585,13 +590,14 @@ bool eventTriggered(double interval) {
 }
 
 
+/*bug*/
 void lockBlock() {
     Position p[NUM_POSITIONS];
     getCellPositions(&currentBlock, p);
 
 
     for(int i = 0; i < NUM_POSITIONS; i++) {
-        grid[p[i].y][p[i].x] = currentBlock.id;
+        grid[p[i].row][p[i].column] = currentBlock.id;
     }
 
     currentBlock = nextBlock;
@@ -617,13 +623,14 @@ bool blockFits() {
     getCellPositions(&currentBlock, p);
 
     for(int i = 0; i < NUM_POSITIONS; i++) {
-        if(isCellEmpty(p[i].y, p[i].x) == false) {
+        if(isCellEmpty(p[i].row, p[i].column) == false) {
             return false;
         }
     }
 
     return true;
 }
+
 
 
 int main() {
