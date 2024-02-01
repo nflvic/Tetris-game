@@ -13,7 +13,7 @@
 
 typedef enum BlockID BlockID;
 enum BlockID {
-    L_BLOCK  = 200,
+    L_BLOCK,
     J_BLOCK,
     I_BLOCK,
     S_BLOCK,
@@ -138,7 +138,7 @@ void InitTBlock(Block *lb) {
 
         };
 
-        moveBlock(&tmp, 0, 3);
+        moveBlock(&tmp, -1, 3);
 
         memcpy(lb, &tmp, sizeof(Block));
 }
@@ -179,7 +179,7 @@ void InitLBlock(Block *lb) {
             }
 
         };
-        moveBlock(&tmp, 0, 3);
+        moveBlock(&tmp, -1, 3);
         memcpy(lb, &tmp, sizeof(Block));
 }
 
@@ -189,7 +189,7 @@ void InitIBlock(Block *lb) {
             .columnOffset = 0,
             .rowOffset = 0,
             .id = I_BLOCK,
-            .rotationState = 2,
+            .rotationState = 1,
             .cells = {
                 [0] = {
                     [0] = { .x = 1, .y = 0 },
@@ -219,7 +219,7 @@ void InitIBlock(Block *lb) {
             }
 
         };
-        moveBlock(&tmp, 0, 3);
+        moveBlock(&tmp, -2, 3);
         memcpy(lb, &tmp, sizeof(Block));
 }
 
@@ -259,7 +259,7 @@ void InitOBlock(Block *lb) {
             }
 
         };
-        moveBlock(&tmp, 0, 3);
+        moveBlock(&tmp, -1, 4);
         memcpy(lb, &tmp, sizeof(Block));
 }
 
@@ -300,7 +300,7 @@ void InitSBlock(Block *lb) {
             }
 
         };
-        moveBlock(&tmp, 0, 3);
+        moveBlock(&tmp, -1, 3);
         memcpy(lb, &tmp, sizeof(Block));
 }
 
@@ -337,11 +337,135 @@ void InitZBlock(Block *lb) {
                     [2] = { .x = 1, .y = 1 },
                     [3] = { .x = 2, .y = 0 }
                 },
+                }
+            };
+        moveBlock(&tmp, -1, 3);
+        memcpy(lb, &tmp, sizeof(Block));
+}
+
+
+void InitJBlock(Block *lb) {
+        Block tmp = {
+            .color = PINK,
+            .columnOffset = 0,
+            .rowOffset = 0,
+            .id = J_BLOCK,
+            .rotationState = 1,
+            .cells = {
+                [0] = {
+                    [0] = { .x = 0, .y = 0 },
+                    [1] = { .x = 1, .y = 0 },
+                    [2] = { .x = 1, .y = 1 },
+                    [3] = { .x = 1, .y = 2 }
+                },
+                [1] = {
+                    [0] = { .x = 0, .y = 1 },
+                    [1] = { .x = 0, .y = 2 },
+                    [2] = { .x = 1, .y = 1 },
+                    [3] = { .x = 2, .y = 1 }
+                },
+                [2] = {
+                    [0] = { .x = 1, .y = 0 },
+                    [1] = { .x = 1, .y = 1 },
+                    [2] = { .x = 1, .y = 2 },
+                    [3] = { .x = 2, .y = 2 }
+                },
+
+                [3] = {
+                    [0] = { .x = 0, .y = 1 },
+                    [1] = { .x = 1, .y = 1 },
+                    [2] = { .x = 2, .y = 0 },
+                    [3] = { .x = 2, .y = 1 }
+                },
             }
 
         };
-        moveBlock(&tmp, 0, 3);
+        moveBlock(&tmp, -1, 3);
         memcpy(lb, &tmp, sizeof(Block));
+}
+
+
+Block blocks[7] = { 0 };
+
+void initBlock(Block *b, int id) {
+    switch(id) {
+        case I_BLOCK: InitIBlock(b); break;
+        case O_BLOCK: InitOBlock(b); break;
+        case J_BLOCK: InitJBlock(b); break;
+        case Z_BLOCK: InitZBlock(b); break;
+        case T_BLOCK: InitTBlock(b); break;
+        case S_BLOCK: InitSBlock(b); break;
+        case L_BLOCK: InitLBlock(b); break;
+        default: exit(1);
+    }
+}
+int NUM_BLOCKS = 7;
+
+void fillBlocks() {
+        for(int i = L_BLOCK; i <= O_BLOCK; i++) {
+            Block test = {};
+
+            initBlock(&test, i);
+            blocks[i] = test;
+        }
+}
+
+void generateRandomBlock(Block *b) {
+
+    if(NUM_BLOCKS == 0) {
+        fillBlocks();
+        NUM_BLOCKS = 7;
+    }
+
+    int index = (rand() % NUM_BLOCKS); 
+    memcpy(b, &(blocks[index]), sizeof(Block));
+
+    NUM_BLOCKS--;
+
+    for(int i = index; i < 6; i++) {
+        memmove(&blocks[i], &blocks[i+1], sizeof(Block));
+    }
+
+
+}
+
+Block currentBlock = {};
+Block nextBlock = {};
+
+void drawGame() {
+    PrintGrid();
+    DisplayGrid();
+    DrawBlock(&currentBlock);
+}
+
+
+void moveBlockLeft(){
+    moveBlock(&currentBlock, 0, -1);
+}
+
+void moveBlockRight(){
+    moveBlock(&currentBlock, 0, 1);
+}
+
+void moveBlockDown(){
+    moveBlock(&currentBlock, 1, 0);
+}
+
+void handleInput() {
+    int keyCode = GetKeyPressed();
+
+    switch(keyCode) {
+        case KEY_LEFT: 
+            moveBlockLeft();
+        break;
+        case KEY_RIGHT:
+            moveBlockRight();
+         break;
+        case KEY_DOWN: 
+            moveBlockDown();
+        break;
+        default: break;
+    }
 }
 
 int main() {
@@ -350,27 +474,17 @@ int main() {
 
     SetTargetFPS(60);
 
-
-    //grid.grid[10][9] = 4;
-    //grid.grid[10][8] = 4;
-    //grid.grid[10][7] = 4;
-
-    PrintGrid();
-
-    Block test = {};
-
-    InitZBlock(&test);
+    fillBlocks();
+    generateRandomBlock(&currentBlock);
+    generateRandomBlock(&nextBlock);
 
 
     while(WindowShouldClose() == false) {
+        handleInput();
         BeginDrawing();
-
         ClearBackground(BLACK);
-        DisplayGrid();
 
-        DrawBlock(&test);
-        
-        
+        drawGame();
 
         EndDrawing();
     }
