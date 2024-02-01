@@ -458,26 +458,34 @@ bool isBlockOutside() {
     return false;
 }
 
+void lockBlock();
+
+bool isCellEmpty(int row, int col);
+
+bool blockFits();
 
 void moveBlockLeft(){
     moveBlock(&currentBlock, 0, -1);
 
-    if(isBlockOutside()) {
+    if(isBlockOutside() || blockFits() == false) {
         moveBlock(&currentBlock, 0, 1);
     }
 }
 
 void moveBlockRight(){
     moveBlock(&currentBlock, 0, 1);
-    if(isBlockOutside()) {
+    if(isBlockOutside() || blockFits() == false) {
         moveBlock(&currentBlock, 0, -1);
     }
 }
 
+
+
 void moveBlockDown(){
     moveBlock(&currentBlock, 1, 0);
-    if(isBlockOutside()) {
+    if(isBlockOutside() || blockFits() == false) {
         moveBlock(&currentBlock, -1, 0);
+        lockBlock();
     }
 }
 
@@ -522,6 +530,55 @@ void handleInput() {
     }
 }
 
+double lastUpdateTime = 0;
+
+bool eventTriggered(double interval) {
+    double currentTime = GetTime();
+
+    if(currentTime - lastUpdateTime >= interval) {
+        lastUpdateTime = currentTime;
+        return true;
+    }
+
+    return false;
+}
+
+
+void lockBlock() {
+    Position p[NUM_POSITIONS];
+    getCellPositions(&currentBlock, p);
+
+
+    for(int i = 0; i < NUM_POSITIONS; i++) {
+        grid[p[i].y][p[i].x] = currentBlock.id;
+    }
+
+    currentBlock = nextBlock;
+
+    generateRandomBlock(&nextBlock);
+
+}
+
+bool isCellEmpty(int row, int col) {
+    if(grid[row][col] == 0) {
+        return true;
+    }
+    return false;
+}
+
+bool blockFits() {
+    Position p[NUM_POSITIONS];
+    getCellPositions(&currentBlock, p);
+
+    for(int i = 0; i < NUM_POSITIONS; i++) {
+        if(isCellEmpty(p[i].y, p[i].x) == false) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
 
 int main() {
 
@@ -536,6 +593,11 @@ int main() {
 
     while(WindowShouldClose() == false) {
         handleInput();
+
+        if(eventTriggered(0.2)) {
+            moveBlockDown();
+        }
+
         BeginDrawing();
         ClearBackground(BLACK);
 
