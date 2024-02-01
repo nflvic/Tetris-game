@@ -149,7 +149,7 @@ void InitLBlock(Block *lb) {
             .columnOffset = 0,
             .rowOffset = 0,
             .id = L_BLOCK,
-            .rotationState = 2,
+            .rotationState = 0,
             .cells = {
                 [0] = {
                     [0] = { .x = 0, .y = 2 },
@@ -189,7 +189,7 @@ void InitIBlock(Block *lb) {
             .columnOffset = 0,
             .rowOffset = 0,
             .id = I_BLOCK,
-            .rotationState = 1,
+            .rotationState = 0,
             .cells = {
                 [0] = {
                     [0] = { .x = 1, .y = 0 },
@@ -229,7 +229,7 @@ void InitOBlock(Block *lb) {
             .columnOffset = 0,
             .rowOffset = 0,
             .id = O_BLOCK,
-            .rotationState = 2,
+            .rotationState = 0,
             .cells = {
                 [0] = {
                     [0] = { .x = 0, .y = 0 },
@@ -270,7 +270,7 @@ void InitSBlock(Block *lb) {
             .columnOffset = 0,
             .rowOffset = 0,
             .id = S_BLOCK,
-            .rotationState = 2,
+            .rotationState = 0,
             .cells = {
                 [0] = {
                     [0] = { .x = 0, .y = 1 },
@@ -310,7 +310,7 @@ void InitZBlock(Block *lb) {
             .columnOffset = 0,
             .rowOffset = 0,
             .id = Z_BLOCK,
-            .rotationState = 2,
+            .rotationState = 0,
             .cells = {
                 [0] = {
                     [0] = { .x = 0, .y = 0 },
@@ -350,7 +350,7 @@ void InitJBlock(Block *lb) {
             .columnOffset = 0,
             .rowOffset = 0,
             .id = J_BLOCK,
-            .rotationState = 1,
+            .rotationState = 0,
             .cells = {
                 [0] = {
                     [0] = { .x = 0, .y = 0 },
@@ -481,6 +481,23 @@ void moveBlockDown(){
     }
 }
 
+void rotateBlock() {
+    if(currentBlock.rotationState < 3) {
+        currentBlock.rotationState++;
+        return;
+    }
+
+    currentBlock.rotationState = 0;
+}
+
+void unRotateBlock() {
+    currentBlock.rotationState--;
+
+    if(currentBlock.rotationState < 0) {
+        currentBlock.rotationState = 3;
+    }
+}
+
 void handleInput() {
     int keyCode = GetKeyPressed();
 
@@ -493,6 +510,13 @@ void handleInput() {
          break;
         case KEY_DOWN: 
             moveBlockDown();
+        break;
+
+        case KEY_UP:
+            rotateBlock();
+            if(isBlockOutside()) {
+                unRotateBlock();
+            }
         break;
         default: break;
     }
