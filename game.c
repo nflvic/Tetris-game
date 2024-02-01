@@ -15,11 +15,11 @@ bool GAME_OVER = false;
 
 typedef enum BlockID BlockID;
 enum BlockID {
-    L_BLOCK = 1,
-    J_BLOCK,
-    I_BLOCK,
-    S_BLOCK,
     T_BLOCK,
+    I_BLOCK,
+    L_BLOCK,
+    J_BLOCK,
+    S_BLOCK,
     Z_BLOCK,
     O_BLOCK,
 };
@@ -45,9 +45,14 @@ struct Block {
 
 int grid[NUM_ROWS][NUM_COLS] = { 0 };
 
+Block currentBlock = {};
+Block nextBlock = {};
+
 Color colors[] = {
-    BROWN, GREEN, RED, ORANGE, YELLOW, PURPLE, PINK, BLUE, BLACK
+    BROWN, GREEN, RED, ORANGE, YELLOW, PURPLE, PINK, BLUE, MAROON
 };
+
+Block blocks[7] = { 0 };
 
 void PrintGrid(){
     return;
@@ -99,8 +104,9 @@ void DisplayGrid() {
 
             int cellvalue = grid[row][column];
 
+            /*bug*/
             if(cellvalue == 0) {
-                cellvalue = 8;
+                //cellvalue = 8;
             }
 
             DrawRectangle((column * CELL_SIZE) + 1, (row * CELL_SIZE) + 1, CELL_SIZE - 1, CELL_SIZE - 1, colors[cellvalue]);
@@ -392,7 +398,7 @@ void InitJBlock(Block *lb) {
 }
 
 
-Block blocks[7] = { 0 };
+//last
 
 void initBlock(Block *b, int id) {
     switch(id) {
@@ -409,7 +415,7 @@ void initBlock(Block *b, int id) {
 int NUM_BLOCKS = 7;
 
 void fillBlocks() {
-        for(int i = L_BLOCK; i <= O_BLOCK; i++) {
+        for(int i = 0; i <= 6; i++) {
             Block test = {};
 
             initBlock(&test, i);
@@ -430,14 +436,13 @@ void generateRandomBlock(Block *b) {
     NUM_BLOCKS--;
 
     for(int i = index; i < 6; i++) {
-        memmove(&blocks[i], &blocks[i+1], sizeof(Block));
+       memmove(&blocks[i], &blocks[i+1], sizeof(Block));
     }
 
 
 }
 
-Block currentBlock = {};
-Block nextBlock = {};
+
 
 void drawGame() {
     PrintGrid();
@@ -597,7 +602,11 @@ void lockBlock() {
 
 
     for(int i = 0; i < NUM_POSITIONS; i++) {
-        grid[p[i].row][p[i].column] = currentBlock.id;
+        if(currentBlock.id == 0) {
+            grid[p[i].row][p[i].column] = 4;
+        } else {
+            grid[p[i].row][p[i].column] = currentBlock.id;
+        }
     }
 
     currentBlock = nextBlock;
