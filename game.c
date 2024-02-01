@@ -11,6 +11,8 @@
 #define NUM_POSITIONS   4
 #define NUM_STATES      4
 
+bool GAME_OVER = false;
+
 typedef enum BlockID BlockID;
 enum BlockID {
     L_BLOCK,
@@ -506,6 +508,45 @@ void unRotateBlock() {
     }
 }
 
+bool rowIsFull(int row) {
+    for(int i = 0; i < NUM_COLS; i++) {
+        if(grid[row][i] == 0) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+
+void clearRow(int row) {
+    for(int i = 0; i < NUM_COLS; i++) {
+        grid[row][i] = 0;
+    }
+}
+
+void moveRowDown(int row, int numRows) {
+    for(int i = 0; i < NUM_COLS; i++){
+        grid[row+ numRows][i] = grid[row][i];
+        grid[row][i] = 0;
+    }
+}
+
+int clearFullRows() {
+    int completed = 0;
+
+    for(int i = NUM_ROWS - 1; i >= 0; i--) {
+        if(rowIsFull(i)) {
+            clearRow(i);
+            completed++;
+        } else if(completed > 0) {
+            moveRowDown(i, completed);
+        }
+    }
+
+    return completed;
+}
+
 void handleInput() {
     int keyCode = GetKeyPressed();
 
@@ -555,7 +596,12 @@ void lockBlock() {
 
     currentBlock = nextBlock;
 
+    if(blockFits() == false) {
+        GAME_OVER = true;
+    }
+
     generateRandomBlock(&nextBlock);
+    clearFullRows();
 
 }
 
@@ -591,7 +637,7 @@ int main() {
     generateRandomBlock(&nextBlock);
 
 
-    while(WindowShouldClose() == false) {
+    while(WindowShouldClose() == false && GAME_OVER == false) {
         handleInput();
 
         if(eventTriggered(0.2)) {
