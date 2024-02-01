@@ -438,17 +438,47 @@ void drawGame() {
     DrawBlock(&currentBlock);
 }
 
+bool isCellOutSide(int col, int row) {
+    if(row >= 0 && row < NUM_ROWS && col >= 0 && col < NUM_COLS) {
+        return false;
+    }
+
+    return true;
+}
+
+
+bool isBlockOutside() {
+    Position p[NUM_POSITIONS];
+    getCellPositions(&currentBlock, p);
+    for(int i = 0; i < NUM_POSITIONS; i++) {
+        if(isCellOutSide(p[i].x, p[i].y)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 
 void moveBlockLeft(){
     moveBlock(&currentBlock, 0, -1);
+
+    if(isBlockOutside()) {
+        moveBlock(&currentBlock, 0, 1);
+    }
 }
 
 void moveBlockRight(){
     moveBlock(&currentBlock, 0, 1);
+    if(isBlockOutside()) {
+        moveBlock(&currentBlock, 0, -1);
+    }
 }
 
 void moveBlockDown(){
     moveBlock(&currentBlock, 1, 0);
+    if(isBlockOutside()) {
+        moveBlock(&currentBlock, -1, 0);
+    }
 }
 
 void handleInput() {
@@ -467,6 +497,7 @@ void handleInput() {
         default: break;
     }
 }
+
 
 int main() {
 
